@@ -11,7 +11,7 @@
 
 body{
   margin:0;
-  font-family:Inter,Arial,sans-serif;
+  font-family:Arial, sans-serif;
   background:#f5f7fb;
   color:#172033;
 }
@@ -38,10 +38,6 @@ body{
   color:#6558d8;
 }
 
-.lang,button,select,input,textarea{
-  font:inherit;
-}
-
 .lang{
   padding:9px;
   border:1px solid #ddd;
@@ -62,7 +58,6 @@ body{
 }
 
 .hero p{
-  max-width:700px;
   color:#5c6677;
   line-height:1.6;
 }
@@ -109,7 +104,6 @@ body{
   margin:0;
   color:#70798a;
   font-size:14px;
-  line-height:1.4;
 }
 
 .panel{
@@ -142,7 +136,7 @@ input,select,textarea{
   border:1px solid #d8dce6;
   border-radius:11px;
   padding:11px;
-  background:#fff;
+  font:inherit;
 }
 
 textarea{
@@ -161,15 +155,6 @@ textarea{
   cursor:pointer;
 }
 
-.btn:hover{
-  opacity:.9;
-}
-
-.btn:disabled{
-  opacity:.6;
-  cursor:wait;
-}
-
 .secondary{
   background:#edf0f7;
   color:#283044;
@@ -183,7 +168,6 @@ textarea{
   padding:17px;
   line-height:1.6;
   white-space:pre-wrap;
-  min-height:50px;
 }
 
 .chat{
@@ -205,38 +189,20 @@ textarea{
 
 .chat-user{
   background:#6558d8;
-  color:#fff;
+  color:white;
   margin-left:15%;
 }
 
 .chat-ai{
-  background:#fff;
+  background:white;
   border:1px solid #e4e7ef;
   margin-right:10%;
 }
 
-.chat-label{
-  font-size:11px;
-  font-weight:700;
-  opacity:.65;
-  margin-bottom:4px;
-}
-
-.loading{
-  color:#737b8b;
-  font-style:italic;
-}
-
-.note{
-  font-size:12px;
-  color:#777f8d;
-  margin-top:12px;
-}
-
 .status{
   margin-top:10px;
-  font-size:13px;
   color:#687184;
+  font-size:13px;
 }
 
 .foot{
@@ -251,34 +217,18 @@ textarea{
     grid-template-columns:1fr 1fr;
   }
 
-  .hero h1{
-    font-size:34px;
-  }
-
   .row{
     grid-template-columns:1fr;
   }
 
-  .chat-user{
-    margin-left:5%;
-  }
-
-  .chat-ai{
-    margin-right:5%;
+  .hero h1{
+    font-size:34px;
   }
 }
 
 @media(max-width:450px){
   .grid{
     grid-template-columns:1fr;
-  }
-
-  .hero{
-    padding:28px 20px;
-  }
-
-  .hero h1{
-    font-size:30px;
   }
 }
 </style>
@@ -292,7 +242,7 @@ textarea{
 <div class="top">
   <div class="logo">🤖 AI-<b>Ustaz</b></div>
 
-  <select class="lang" id="topLang">
+  <select class="lang">
     <option>Русский</option>
     <option>Қазақша</option>
   </select>
@@ -304,45 +254,44 @@ textarea{
   <h1>Интеллектуальный ассистент преподавателя</h1>
 
   <p>
-    Создавайте планы занятий, практические работы, тесты,
-    критерии оценивания и общайтесь с AI-помощником
-    с помощью искусственного интеллекта.
+    Создавайте планы занятий, практические работы,
+    тесты и критерии оценивания с помощью AI.
   </p>
 </section>
 
 <div class="grid">
 
-  <div class="card" onclick="tool('plan')">
+  <div class="card" data-tool="plan">
     <div class="i">📚</div>
     <h3>План занятия</h3>
     <p>Структура занятия и результаты обучения.</p>
   </div>
 
-  <div class="card" onclick="tool('lab')">
+  <div class="card" data-tool="lab">
     <div class="i">🧪</div>
     <h3>Практическая работа</h3>
     <p>Задания, теория и критерии.</p>
   </div>
 
-  <div class="card" onclick="tool('test')">
+  <div class="card" data-tool="test">
     <div class="i">📝</div>
     <h3>Тест</h3>
     <p>Вопросы и варианты ответов.</p>
   </div>
 
-  <div class="card" onclick="tool('criteria')">
+  <div class="card" data-tool="criteria">
     <div class="i">🎯</div>
     <h3>Оценивание</h3>
     <p>Критерии и дескрипторы.</p>
   </div>
 
-  <div class="card" onclick="tool('explain')">
+  <div class="card" data-tool="explain">
     <div class="i">👨‍🎓</div>
     <h3>Объяснить студенту</h3>
     <p>Простое объяснение сложной темы.</p>
   </div>
 
-  <div class="card" onclick="tool('chat')">
+  <div class="card" data-tool="chat">
     <div class="i">💬</div>
     <h3>AI-чат</h3>
     <p>Универсальный помощник преподавателя.</p>
@@ -356,11 +305,11 @@ textarea{
 
   <div id="form"></div>
 
-  <button id="generateBtn" class="btn" onclick="generate()">
+  <button id="generateBtn" class="btn">
     ✨ Создать
   </button>
 
-  <button class="btn secondary" onclick="copyResult()">
+  <button id="copyBtn" class="btn secondary">
     📋 Копировать
   </button>
 
@@ -371,7 +320,7 @@ textarea{
   <div id="chatInputArea" hidden>
 
 ```
-<label style="display:block;margin-top:14px">
+<label>
   Ваш запрос
 
   <textarea
@@ -380,7 +329,7 @@ textarea{
   ></textarea>
 </label>
 
-<button class="btn" onclick="sendChat()">
+<button id="sendBtn" class="btn">
   🚀 Отправить
 </button>
 ```
@@ -388,11 +337,6 @@ textarea{
   </div>
 
   <div id="status" class="status"></div>
-
-  <div class="note">
-    AI-Ustaz подключён к защищённому серверному Worker.
-    Секретный API-ключ не хранится в этом HTML-файле.
-  </div>
 
 </section>
 
@@ -402,590 +346,7 @@ textarea{
 
 </main>
 
-<script>
-
-const WORKER_URL =
-"https://ai-ustaz-chat.abaeva-shahizat.workers.dev/";
-
-let current = "";
-let chatHistory = [];
-
-const titles = {
-  plan:"📚 План занятия",
-  lab:"🧪 Практическая работа",
-  test:"📝 Тест",
-  criteria:"🎯 Критерии оценивания",
-  explain:"👨‍🎓 Объяснить студенту",
-  chat:"💬 AI-чат"
-};
-
-function tool(type){
-
-  current = type;
-
-  document.getElementById("panel").classList.add("show");
-  document.getElementById("title").textContent = titles[type];
-
-  const form = document.getElementById("form");
-  const result = document.getElementById("result");
-  const chatBox = document.getElementById("chatBox");
-  const chatInputArea = document.getElementById("chatInputArea");
-  const status = document.getElementById("status");
-  const generateBtn = document.getElementById("generateBtn");
-
-  result.hidden = true;
-  chatBox.hidden = true;
-  chatInputArea.hidden = true;
-  status.textContent = "";
-
-  if(type === "chat"){
-
-    form.innerHTML = "";
-
-    generateBtn.style.display = "none";
-    chatBox.hidden = false;
-    chatInputArea.hidden = false;
-
-    if(chatHistory.length === 0){
-
-      addChatMessage(
-        "ai",
-        "Здравствуйте! 👋 Я AI-Ustaz.\n\n" +
-        "Я могу помочь составить план занятия, " +
-        "практическую работу, тест, критерии оценивания " +
-        "или объяснить сложную тему.\n\n" +
-        "Напишите свой вопрос."
-      );
-
-    }
-
-  }else{
-
-    generateBtn.style.display = "inline-block";
-
-    chatHistory = [];
-    chatBox.innerHTML = "";
-
-    let base = `
-      <div class="row">
-
-        <label>
-          Дисциплина
-          <input id="s" placeholder="Например: JavaScript">
-        </label>
-
-        <label>
-          Тема
-          <input id="t" placeholder="Например: DOM">
-        </label>
-
-      </div>
-
-      <div class="row" style="margin-top:12px">
-
-        <label>
-          Курс
-          <input id="c" placeholder="3 курс">
-        </label>
-
-        <label>
-          Язык
-          <select id="l">
-            <option>Русский</option>
-            <option>Қазақша</option>
-          </select>
-        </label>
-
-      </div>
-    `;
-
-    let extra = "";
-
-    if(type === "explain"){
-
-      extra = `
-        <label style="display:block;margin-top:12px">
-          Что нужно объяснить
-
-          <textarea
-            id="q"
-            placeholder="Например: объясни тему DOM простыми словами"
-          ></textarea>
-
-```
-    </label>
-  `;
-
-}
-
-if(type === "test"){
-
-  extra = `
-    <label style="display:block;margin-top:12px">
-      Количество вопросов
-      <input id="n" value="10">
-    </label>
-  `;
-
-}
-
-form.innerHTML = base + extra;
-```
-
-}
-
-document.getElementById("panel")
-.scrollIntoView({behavior:"smooth"});
-}
-
-function value(id){
-
-const element = document.getElementById(id);
-
-return element ? element.value : "";
-}
-
-async function callWorker(message){
-
-const response = await fetch(WORKER_URL,{
-
-```
-method:"POST",
-
-headers:{
-  "Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-  message:message
-})
-```
-
-});
-
-const text = await response.text();
-
-if(!response.ok){
-
-```
-throw new Error(
-  "Worker вернул ошибку " +
-  response.status +
-  ": " +
-  text
-);
-```
-
-}
-
-try{
-
-```
-const data = JSON.parse(text);
-
-if(typeof data === "string"){
-  return data;
-}
-
-return (
-  data.response ||
-  data.message ||
-  data.answer ||
-  data.text ||
-  data.result ||
-  text
-);
-```
-
-}catch(e){
-
-```
-return text;
-```
-
-}
-}
-
-async function generate(){
-
-if(current === "chat"){
-return;
-}
-
-const button =
-document.getElementById("generateBtn");
-
-const result =
-document.getElementById("result");
-
-const status =
-document.getElementById("status");
-
-const s =
-value("s") || "JavaScript";
-
-const t =
-value("t") || "выбранная тема";
-
-const c =
-value("c") || "студенты колледжа";
-
-const l =
-value("l") || "Русский";
-
-const q =
-value("q");
-
-let prompt = "";
-
-if(current === "plan"){
-
-```
-prompt = `
-```
-
-Создай подробный план занятия для преподавателя колледжа.
-
-Дисциплина: ${s}
-Тема: ${t}
-Курс: ${c}
-Язык: ${l}
-
-Включи:
-
-1. Цель занятия.
-2. Результаты обучения.
-3. Этапы занятия с примерным временем.
-4. Объяснение новой темы.
-5. Практическую часть.
-6. Вопросы для закрепления.
-7. Рефлексию.
-8. Домашнее задание.
-
-Ответ дай структурированно и готовым для использования преподавателем.
-`;
-
-}else if(current === "lab"){
-
-```
-prompt = `
-```
-
-Создай полноценную практическую работу для студентов колледжа.
-
-Дисциплина: ${s}
-Тема: ${t}
-Курс: ${c}
-Язык: ${l}
-
-Включи:
-
-1. Цель.
-2. Ожидаемые результаты.
-3. Краткую теорию.
-4. Оборудование и программное обеспечение.
-5. Пошаговое задание.
-6. Контрольные вопросы.
-7. Критерии оценивания.
-
-Материал должен быть практичным и готовым для выдачи студентам.
-`;
-
-}else if(current === "test"){
-
-```
-prompt = `
-```
-
-Создай тест для студентов колледжа.
-
-Дисциплина: ${s}
-Тема: ${t}
-Курс: ${c}
-Язык: ${l}
-Количество вопросов: ${value("n") || 10}
-
-Для каждого вопроса создай 4 варианта ответа.
-После теста укажи правильные ответы.
-Вопросы должны проверять понимание темы.
-`;
-
-}else if(current === "criteria"){
-
-```
-prompt = `
-```
-
-Создай критерии и дескрипторы оценивания работы студента колледжа.
-
-Дисциплина: ${s}
-Тема: ${t}
-Курс: ${c}
-Язык: ${l}
-
-Сделай понятную систему оценивания на 100 баллов.
-Добавь критерии, количество баллов и конкретные дескрипторы.
-`;
-
-}else if(current === "explain"){
-
-```
-prompt = `
-```
-
-Объясни студенту колледжа тему простым и понятным языком.
-
-Дисциплина: ${s}
-Тема: ${t}
-Курс: ${c}
-Язык: ${l}
-
-Запрос преподавателя:
-${q || `Объясни тему «${t}» простыми словами.`}
-
-Используй:
-
-1. Простое определение.
-2. Понятный пример.
-3. Практическое применение.
-4. Небольшое задание для самопроверки.
-   `;
-
-}
-
-result.hidden = false;
-result.textContent =
-"⏳ AI-Ustaz готовит ответ...";
-
-status.textContent =
-"Подключение к AI-Ustaz Worker...";
-
-button.disabled = true;
-
-try{
-
-```
-const answer =
-  await callWorker(prompt);
-
-result.textContent = answer;
-
-status.textContent =
-  "✅ Ответ получен от AI-Ustaz.";
-```
-
-}catch(error){
-
-```
-console.error(error);
-
-result.textContent =
-```
-
-`Не удалось получить ответ от AI-Ustaz.
-
-Ошибка:
-${error.message}
-
-Проверьте настройки Worker.`;
-
-```
-status.textContent =
-  "❌ Ошибка соединения с Worker.";
-```
-
-}finally{
-
-```
-button.disabled = false;
-```
-
-}
-}
-
-function addChatMessage(type,text){
-
-const chatBox =
-document.getElementById("chatBox");
-
-const message =
-document.createElement("div");
-
-message.className =
-"chat-message " +
-(type === "user"
-? "chat-user"
-: "chat-ai");
-
-const label =
-document.createElement("div");
-
-label.className = "chat-label";
-
-label.textContent =
-type === "user"
-? "Вы"
-: "🤖 AI-Ustaz";
-
-const content =
-document.createElement("div");
-
-content.textContent = text;
-
-message.appendChild(label);
-message.appendChild(content);
-
-chatBox.appendChild(message);
-
-chatBox.scrollTop =
-chatBox.scrollHeight;
-}
-
-async function sendChat(){
-
-const input =
-document.getElementById("chatMessage");
-
-const message =
-input.value.trim();
-
-if(!message){
-return;
-}
-
-input.value = "";
-
-addChatMessage("user",message);
-
-const chatBox =
-document.getElementById("chatBox");
-
-const loading =
-document.createElement("div");
-
-loading.className =
-"chat-message chat-ai loading";
-
-loading.textContent =
-"🤖 AI-Ustaz печатает...";
-
-chatBox.appendChild(loading);
-
-chatBox.scrollTop =
-chatBox.scrollHeight;
-
-try{
-
-```
-const context =
-  chatHistory
-    .slice(-10)
-    .map(item =>
-      item.role + ": " + item.content
-    )
-    .join("\n");
-
-const prompt = `
-```
-
-Ты — AI-Ustaz, помощник преподавателя колледжа.
-
-Отвечай на русском языке, если пользователь не попросил другой язык.
-Отвечай понятно, доброжелательно и по существу.
-
-История диалога:
-${context}
-
-Новый запрос пользователя:
-${message}
-`;
-
-```
-const answer =
-  await callWorker(prompt);
-
-loading.remove();
-
-addChatMessage("ai",answer);
-
-chatHistory.push({
-  role:"user",
-  content:message
-});
-
-chatHistory.push({
-  role:"assistant",
-  content:answer
-});
-```
-
-}catch(error){
-
-```
-loading.remove();
-
-addChatMessage(
-  "ai",
-  "Не удалось получить ответ.\n\n" +
-  "Ошибка:\n" +
-  error.message +
-  "\n\nПроверь настройки Worker и CORS."
-);
-```
-
-}
-}
-
-document.addEventListener(
-"keydown",
-function(event){
-
-```
-if(
-  event.key === "Enter" &&
-  event.ctrlKey &&
-  current === "chat"
-){
-
-  sendChat();
-
-}
-```
-
-}
-);
-
-async function copyResult(){
-
-const result =
-document.getElementById("result");
-
-if(result.hidden){
-return;
-}
-
-try{
-
-```
-await navigator.clipboard.writeText(
-  result.textContent
-);
-
-document.getElementById("status").textContent =
-  "📋 Ответ скопирован.";
-```
-
-}catch(e){
-
-```
-document.getElementById("status").textContent =
-  "Не удалось скопировать ответ.";
-```
-
-}
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
