@@ -29,9 +29,9 @@ document.querySelectorAll(".card").forEach(card => {
 
 card.addEventListener("click", () => {
 
-```
+
 openTool(card.dataset.tool);
-```
+
 
 });
 
@@ -57,7 +57,7 @@ status.textContent = "";
 
 if(type === "chat"){
 
-```
+
 generateBtn.style.display = "none";
 
 copyBtn.style.display = "none";
@@ -75,11 +75,11 @@ if(chatHistory.length === 0){
   );
 
 }
-```
+
 
 }else{
 
-```
+
 generateBtn.style.display = "inline-block";
 
 copyBtn.style.display = "inline-block";
@@ -148,7 +148,6 @@ if(type === "test"){
 }
 
 form.innerHTML = base + extra;
-```
 
 }
 
@@ -173,7 +172,7 @@ WORKER_URL,
 {
 method:"POST",
 
-```
+
   headers:{
     "Content-Type":"application/json"
   },
@@ -182,7 +181,7 @@ method:"POST",
     message:message
   })
 }
-```
+
 
 );
 
@@ -192,30 +191,28 @@ let data;
 
 try{
 
-```
 data = JSON.parse(text);
-```
+
 
 }catch(error){
 
-```
+
 throw new Error(
   "Worker вернул неправильный ответ: " +
   text
 );
-```
+
 
 }
 
 if(!response.ok){
 
-```
+
 throw new Error(
   data.error ||
   "Ошибка Worker: " +
   response.status
 );
-```
 
 }
 
@@ -245,9 +242,8 @@ getValue("language") || "Русский";
 
 if(currentTool === "plan"){
 
-```
 return `
-```
+
 
 Создай подробный план занятия.
 
@@ -266,9 +262,9 @@ return `
 
 if(currentTool === "lab"){
 
-```
+
 return `
-```
+
 
 Создай практическую работу для студентов колледжа.
 
@@ -286,12 +282,12 @@ return `
 
 if(currentTool === "test"){
 
-```
+
 const count =
   getValue("count") || "10";
 
 return `
-```
+
 
 Создай тест для студентов колледжа.
 
@@ -310,9 +306,9 @@ return `
 
 if(currentTool === "criteria"){
 
-```
+
 return `
-```
+
 
 Создай критерии оценивания работы студента.
 
@@ -329,13 +325,13 @@ return `
 
 if(currentTool === "explain"){
 
-```
+
 const question =
   getValue("question") ||
   "Объясни тему простыми словами.";
 
 return `
-```
+
 
 Объясни студенту колледжа тему простым языком.
 
@@ -362,7 +358,7 @@ generateBtn.addEventListener(
 "click",
 async () => {
 
-```
+
 const prompt = buildPrompt();
 
 if(!prompt){
@@ -403,7 +399,7 @@ try{
   generateBtn.disabled = false;
 
 }
-```
+
 
 }
 );
@@ -439,7 +435,7 @@ sendBtn.disabled = true;
 
 try{
 
-```
+
 const history =
   chatHistory
     .slice(-10)
@@ -451,7 +447,6 @@ const history =
     .join("\n");
 
 const prompt = `
-```
 
 Ты — AI-Ustaz, помощник преподавателя колледжа.
 
@@ -466,7 +461,7 @@ ${history}
 ${message}
 `;
 
-```
+
 const answer =
   await callWorker(prompt);
 
@@ -486,11 +481,11 @@ chatHistory.push({
   role:"assistant",
   content:answer
 });
-```
+
 
 }catch(error){
 
-```
+
 loading.remove();
 
 addMessage(
@@ -498,13 +493,13 @@ addMessage(
   "❌ Ошибка:\n" +
   error.message
 );
-```
+
 
 }finally{
 
-```
+
 sendBtn.disabled = false;
-```
+
 
 }
 
@@ -536,7 +531,7 @@ copyBtn.addEventListener(
 "click",
 async () => {
 
-```
+
 if(result.hidden){
   return;
 }
@@ -556,7 +551,7 @@ try{
     "Не удалось скопировать.";
 
 }
-```
+
 
 }
 );
@@ -565,7 +560,7 @@ chatMessage.addEventListener(
 "keydown",
 event => {
 
-```
+
 if(
   event.key === "Enter" &&
   event.ctrlKey
@@ -574,7 +569,7 @@ if(
   sendChat();
 
 }
-```
+
 
 }
 );
