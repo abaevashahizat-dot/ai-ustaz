@@ -343,8 +343,32 @@ textarea{
 </div>
 
 </main>
+<script>
+document.querySelectorAll(".card").forEach(function(card){
 
-<script src="script.js"></script>
+  card.addEventListener("click", function(){
 
-</body>
-</html>
+    const panel = document.getElementById("panel");
+    const title = document.getElementById("title");
+
+    const names = {
+      plan: "📚 План занятия",
+      lab: "🧪 Практическая работа",
+      test: "📝 Тест",
+      criteria: "🎯 Критерии оценивания",
+      explain: "👨‍🎓 Объяснить студенту",
+      chat: "💬 AI-чат"
+    };
+
+    title.textContent = names[card.dataset.tool];
+
+    panel.classList.add("show");
+
+    panel.scrollIntoView({
+      behavior: "smooth"
+    });
+
+  });
+
+});
+</script>
