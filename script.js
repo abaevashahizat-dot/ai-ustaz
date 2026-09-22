@@ -569,6 +569,7 @@ if(
   sendChat();
 
 }
+  alert("SCRIPT.JS ЗАГРУЖЕН");
 
 
 }
