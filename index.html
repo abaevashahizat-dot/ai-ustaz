@@ -1,8 +1,1000 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI-Ustaz — AI ассистент преподавателя</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#172033}.wrap{max-width:1000px;margin:auto;padding:20px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:25px;font-weight:800}.logo b{color:#6558d8}.lang,button,select,input,textarea{font:inherit}.lang{padding:9px;border:1px solid #ddd;border-radius:10px;background:#fff}.hero{padding:38px 28px;border-radius:26px;background:linear-gradient(135deg,#fff,#eeeaff);margin-bottom:18px}.hero h1{font-size:42px;margin:0 0 10px}.hero p{max-width:700px;color:#5c6677;line-height:1.6}.badge{display:inline-block;background:#e5e0ff;color:#5145ad;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{background:#fff;border:1px solid #e4e7ef;border-radius:18px;padding:19px;cursor:pointer}.card:hover{box-shadow:0 8px 25px #0001;transform:translateY(-2px)}.card .i{font-size:27px}.card h3{margin:9px 0 5px}.card p{margin:0;color:#70798a;font-size:14px;line-height:1.4}.panel{display:none;background:#fff;border:1px solid #e4e7ef;border-radius:22px;padding:24px;margin-top:18px}.panel.show{display:block}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:13px;font-weight:700}input,select,textarea{width:100%;margin-top:6px;border:1px solid #d8dce6;border-radius:11px;padding:11px;background:#fff}textarea{min-height:115px;resize:vertical}.btn{margin-top:14px;border:0;background:#6558d8;color:#fff;border-radius:11px;padding:12px 17px;font-weight:700;cursor:pointer}.secondary{background:#edf0f7;color:#283044;margin-left:7px}.result{margin-top:18px;background:#f7f8fb;border-radius:15px;padding:17px;line-height:1.6;white-space:pre-wrap}.note{font-size:12px;color:#777f8d;margin-top:12px}.foot{text-align:center;color:#7c8492;font-size:12px;padding:25px}@media(max-width:700px){.grid{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}.row{grid-template-columns:1fr}}@media(max-width:450px){.grid{grid-template-columns:1fr}}</style></head>
-<body><main class="wrap"><div class="top"><div class="logo">🤖 AI-<b>Ustaz</b></div><select class="lang"><option>Русский</option><option>Қазақша</option></select></div>
-<section class="hero"><span class="badge">AI-Ustaz · 2026</span><h1>Интеллектуальный ассистент преподавателя</h1><p>Создавайте планы занятий, практические работы, тесты и критерии оценивания с помощью искусственного интеллекта.</p></section>
-<div class="grid"><div class="card" onclick="tool('plan')"><div class="i">📚</div><h3>План занятия</h3><p>Структура занятия и результаты обучения.</p></div><div class="card" onclick="tool('lab')"><div class="i">🧪</div><h3>Практическая работа</h3><p>Задания, теория и критерии.</p></div><div class="card" onclick="tool('test')"><div class="i">📝</div><h3>Тест</h3><p>Вопросы и варианты ответов.</p></div><div class="card" onclick="tool('criteria')"><div class="i">🎯</div><h3>Оценивание</h3><p>Критерии и дескрипторы.</p></div><div class="card" onclick="tool('explain')"><div class="i">👨‍🎓</div><h3>Объяснить студенту</h3><p>Простое объяснение сложной темы.</p></div><div class="card" onclick="tool('chat')"><div class="i">💬</div><h3>AI-чат</h3><p>Универсальный помощник преподавателя.</p></div></div>
-<section id="panel" class="panel"><h2 id="title">AI-инструмент</h2><div id="form"></div><button class="btn" onclick="generate()">✨ Создать</button><button class="btn secondary" onclick="copyResult()">📋 Копировать</button><div id="result" class="result" hidden></div><div class="note">Демонстрационная версия. Для настоящих AI-ответов подключается защищённый серверный API; секретный API-ключ нельзя размещать в открытом HTML.</div></section><div class="foot">AI-Ustaz — AI-помощник преподавателя колледжа · 2026</div></main>
-<script>let current='';const titles={plan:'📚 План занятия',lab:'🧪 Практическая работа',test:'📝 Тест',criteria:'🎯 Критерии оценивания',explain:'👨‍🎓 Объяснить студенту',chat:'💬 AI-чат'};function tool(t){current=t;panel.classList.add('show');title.textContent=titles[t];let base=`<div class="row"><label>Дисциплина<input id="s" placeholder="Например: JavaScript"></label><label>Тема<input id="t" placeholder="Например: DOM"></label></div><div class="row" style="margin-top:12px"><label>Курс<input id="c" placeholder="3 курс"></label><label>Язык<select id="l"><option>Русский</option><option>Қазақша</option></select></label></div>`;let extra='';if(t==='chat'||t==='explain')extra=`<label style="display:block;margin-top:12px">Ваш запрос<textarea id="q" placeholder="Например: объясни тему DOM простыми словами"></textarea></label>`;if(t==='test')extra=`<label style="display:block;margin-top:12px">Количество вопросов<input id="n" value="10"></label>`;form.innerHTML=base+extra;result.hidden=true;panel.scrollIntoView({behavior:'smooth'})}function v(id){let x=document.getElementById(id);return x?x.value:''}function generate(){let s=v('s')||'JavaScript',t=v('t')||'выбранная тема',c=v('c')||'студенты колледжа',l=v('l')||'Русский',q=v('q');let out='';if(current==='plan')out=`ПЛАН ЗАНЯТИЯ\n\nДисциплина: ${s}\nТема: ${t}\nКурс: ${c}\nЯзык: ${l}\n\nЦель: сформировать понимание темы и закрепить знания на практике.\n\nЭтапы:\n1. Организационный этап — 5 мин\n2. Актуализация — 10 мин\n3. Объяснение новой темы — 20 мин\n4. Практическая работа — 35 мин\n5. Рефлексия — 10 мин\n6. Домашнее задание — 5 мин`;else if(current==='lab')out=`ПРАКТИЧЕСКАЯ РАБОТА\n\n${s} · ${t} · ${c}\n\nЦель: применить знания на практике.\n\nОборудование: компьютер, редактор кода, браузер.\n\nЗадание:\n1. Изучите краткую теорию.\n2. Создайте новый проект.\n3. Выполните задание по теме «${t}».\n4. Проверьте результат.\n5. Представьте работу преподавателю.\n\nКонтрольные вопросы:\n• Что такое ${t}?\n• Где это применяется?\n• Какие ошибки возможны?`;else if(current==='test')out=`ДЕМОНСТРАЦИОННЫЙ ТЕСТ\n\nТема: ${t}\nКоличество вопросов: ${v('n')||10}\n\n1. Какое утверждение наиболее точно описывает тему?\nA) Вариант 1\nB) Вариант 2\nC) Вариант 3\nD) Вариант 4\n\n2. Где применяется данный подход?\nA) Вариант 1\nB) Вариант 2\nC) Вариант 3\nD) Вариант 4\n\nКлюч: проверить перед использованием.`;else if(current==='criteria')out=`КРИТЕРИИ ОЦЕНИВАНИЯ\n\nТема: ${t}\n\n1. Понимание темы — 30 баллов\n2. Практическое выполнение — 40 баллов\n3. Оформление и представление — 20 баллов\n4. Рефлексия — 10 баллов\n\nИтого: 100 баллов.`;else out=`AI-USTAZ\n\nЗапрос: ${q||`Объясни тему «${t}» простыми словами.`}\n\nДемонстрационный ответ:\nТема объясняется через простое определение, пример из практики и небольшое задание для самопроверки.\n\n1. Главное понятие\n2. Практический пример\n3. Проверка понимания\n\nДля полноценного диалога с AI подключите серверный API.`;result.textContent=out;result.hidden=false}function copyResult(){if(!result.hidden)navigator.clipboard?.writeText(result.textContent)}</script></body></html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI-Ustaz — AI ассистент преподавателя</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:#f5f7fb;
+  color:#172033
+}
+
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:20px
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800
+}
+
+.logo b{
+  color:#6558d8
+}
+
+.lang,button,select,input,textarea{
+  font:inherit
+}
+
+.lang{
+  padding:9px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#fff
+}
+
+.hero{
+  padding:38px 28px;
+  border-radius:26px;
+  background:linear-gradient(135deg,#fff,#eeeaff);
+  margin-bottom:18px
+}
+
+.hero h1{
+  font-size:42px;
+  margin:0 0 10px
+}
+
+.hero p{
+  max-width:700px;
+  color:#5c6677;
+  line-height:1.6
+}
+
+.badge{
+  display:inline-block;
+  background:#e5e0ff;
+  color:#5145ad;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e4e7ef;
+  border-radius:18px;
+  padding:19px;
+  cursor:pointer;
+  transition:.2s
+}
+
+.card:hover{
+  box-shadow:0 8px 25px #0001;
+  transform:translateY(-2px)
+}
+
+.card .i{
+  font-size:27px
+}
+
+.card h3{
+  margin:9px 0 5px
+}
+
+.card p{
+  margin:0;
+  color:#70798a;
+  font-size:14px;
+  line-height:1.4
+}
+
+.panel{
+  display:none;
+  background:#fff;
+  border:1px solid #e4e7ef;
+  border-radius:22px;
+  padding:24px;
+  margin-top:18px
+}
+
+.panel.show{
+  display:block
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+label{
+  font-size:13px;
+  font-weight:700
+}
+
+input,select,textarea{
+  width:100%;
+  margin-top:6px;
+  border:1px solid #d8dce6;
+  border-radius:11px;
+  padding:11px;
+  background:#fff
+}
+
+textarea{
+  min-height:115px;
+  resize:vertical
+}
+
+.btn{
+  margin-top:14px;
+  border:0;
+  background:#6558d8;
+  color:#fff;
+  border-radius:11px;
+  padding:12px 17px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.btn:hover{
+  opacity:.9
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:wait
+}
+
+.secondary{
+  background:#edf0f7;
+  color:#283044;
+  margin-left:7px
+}
+
+.result{
+  margin-top:18px;
+  background:#f7f8fb;
+  border-radius:15px;
+  padding:17px;
+  line-height:1.6;
+  white-space:pre-wrap;
+  min-height:50px
+}
+
+.chat{
+  margin-top:18px;
+  background:#f7f8fb;
+  border-radius:17px;
+  padding:15px;
+  max-height:500px;
+  overflow-y:auto
+}
+
+.chat-message{
+  margin-bottom:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  line-height:1.55;
+  white-space:pre-wrap
+}
+
+.chat-user{
+  background:#6558d8;
+  color:#fff;
+  margin-left:15%
+}
+
+.chat-ai{
+  background:#fff;
+  border:1px solid #e4e7ef;
+  margin-right:10%
+}
+
+.chat-label{
+  font-size:11px;
+  font-weight:700;
+  opacity:.65;
+  margin-bottom:4px
+}
+
+.loading{
+  color:#737b8b;
+  font-style:italic
+}
+
+.note{
+  font-size:12px;
+  color:#777f8d;
+  margin-top:12px
+}
+
+.status{
+  margin-top:10px;
+  font-size:13px;
+  color:#687184
+}
+
+.foot{
+  text-align:center;
+  color:#7c8492;
+  font-size:12px;
+  padding:25px
+}
+
+@media(max-width:700px){
+  .grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .hero h1{
+    font-size:34px
+  }
+
+  .row{
+    grid-template-columns:1fr
+  }
+
+  .chat-user{
+    margin-left:5%
+  }
+
+  .chat-ai{
+    margin-right:5%
+  }
+}
+
+@media(max-width:450px){
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .hero{
+    padding:28px 20px
+  }
+
+  .hero h1{
+    font-size:30px
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<main class="wrap">
+
+<div class="top">
+  <div class="logo">🤖 AI-<b>Ustaz</b></div>
+
+  <select class="lang" id="topLang">
+    <option>Русский</option>
+    <option>Қазақша</option>
+  </select>
+</div>
+
+<section class="hero">
+  <span class="badge">AI-Ustaz · 2026</span>
+
+  <h1>Интеллектуальный ассистент преподавателя</h1>
+
+  <p>
+    Создавайте планы занятий, практические работы, тесты,
+    критерии оценивания и общайтесь с AI-помощником
+    с помощью искусственного интеллекта.
+  </p>
+</section>
+
+<div class="grid">
+
+  <div class="card" onclick="tool('plan')">
+    <div class="i">📚</div>
+    <h3>План занятия</h3>
+    <p>Структура занятия и результаты обучения.</p>
+  </div>
+
+  <div class="card" onclick="tool('lab')">
+    <div class="i">🧪</div>
+    <h3>Практическая работа</h3>
+    <p>Задания, теория и критерии.</p>
+  </div>
+
+  <div class="card" onclick="tool('test')">
+    <div class="i">📝</div>
+    <h3>Тест</h3>
+    <p>Вопросы и варианты ответов.</p>
+  </div>
+
+  <div class="card" onclick="tool('criteria')">
+    <div class="i">🎯</div>
+    <h3>Оценивание</h3>
+    <p>Критерии и дескрипторы.</p>
+  </div>
+
+  <div class="card" onclick="tool('explain')">
+    <div class="i">👨‍🎓</div>
+    <h3>Объяснить студенту</h3>
+    <p>Простое объяснение сложной темы.</p>
+  </div>
+
+  <div class="card" onclick="tool('chat')">
+    <div class="i">💬</div>
+    <h3>AI-чат</h3>
+    <p>Универсальный помощник преподавателя.</p>
+  </div>
+
+</div>
+
+<section id="panel" class="panel">
+
+  <h2 id="title">AI-инструмент</h2>
+
+  <div id="form"></div>
+
+  <button id="generateBtn" class="btn" onclick="generate()">
+    ✨ Создать
+  </button>
+
+  <button class="btn secondary" onclick="copyResult()">
+    📋 Копировать
+  </button>
+
+  <div id="result" class="result" hidden></div>
+
+  <div id="chatBox" class="chat" hidden></div>
+
+  <div id="chatInputArea" hidden>
+    <label style="display:block;margin-top:14px">
+      Ваш запрос
+      <textarea
+        id="chatMessage"
+        placeholder="Например: объясни тему DOM простыми словами"
+      ></textarea>
+    </label>
+
+```
+<button class="btn" onclick="sendChat()">
+  🚀 Отправить
+</button>
+```
+
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <div class="note">
+    AI-Ustaz подключён к защищённому серверному Worker.
+    Секретный API-ключ не хранится в этом HTML-файле.
+  </div>
+
+</section>
+
+<div class="foot">
+  AI-Ustaz — AI-помощник преподавателя колледжа · 2026
+</div>
+
+</main>
+
+<script>
+
+const WORKER_URL =
+  "https://ai-ustaz-chat.abaeva-shahizat.workers.dev/";
+
+let current = "";
+let chatHistory = [];
+
+const titles = {
+  plan: "📚 План занятия",
+  lab: "🧪 Практическая работа",
+  test: "📝 Тест",
+  criteria: "🎯 Критерии оценивания",
+  explain: "👨‍🎓 Объяснить студенту",
+  chat: "💬 AI-чат"
+};
+
+function tool(type){
+
+  current = type;
+
+  document.getElementById("panel").classList.add("show");
+  document.getElementById("title").textContent = titles[type];
+
+  const form = document.getElementById("form");
+  const result = document.getElementById("result");
+  const chatBox = document.getElementById("chatBox");
+  const chatInputArea = document.getElementById("chatInputArea");
+  const status = document.getElementById("status");
+
+  result.hidden = true;
+  chatBox.hidden = true;
+  chatInputArea.hidden = true;
+  status.textContent = "";
+
+  if(type === "chat"){
+
+    form.innerHTML = "";
+
+    chatBox.hidden = false;
+    chatInputArea.hidden = false;
+
+    if(chatHistory.length === 0){
+      addChatMessage(
+        "ai",
+        "Здравствуйте! 👋 Я AI-Ustaz.\n\n" +
+        "Я могу помочь составить план занятия, " +
+        "практическую работу, тест, критерии оценивания " +
+        "или просто объяснить сложную тему.\n\n" +
+        "Напишите свой вопрос."
+      );
+    }
+
+  }else{
+
+    chatHistory = [];
+    chatBox.innerHTML = "";
+
+    let base = `
+      <div class="row">
+
+        <label>
+          Дисциплина
+          <input id="s" placeholder="Например: JavaScript">
+        </label>
+
+        <label>
+          Тема
+          <input id="t" placeholder="Например: DOM">
+        </label>
+
+      </div>
+
+      <div class="row" style="margin-top:12px">
+
+        <label>
+          Курс
+          <input id="c" placeholder="3 курс">
+        </label>
+
+        <label>
+          Язык
+          <select id="l">
+            <option>Русский</option>
+            <option>Қазақша</option>
+          </select>
+        </label>
+
+      </div>
+    `;
+
+    let extra = "";
+
+    if(type === "explain"){
+
+      extra = `
+        <label style="display:block;margin-top:12px">
+          Что нужно объяснить
+          <textarea
+            id="q"
+            placeholder="Например: объясни тему DOM простыми словами"
+          ></textarea>
+
+```
+    </label>
+  `;
+
+}
+
+if(type === "test"){
+
+  extra = `
+    <label style="display:block;margin-top:12px">
+      Количество вопросов
+      <input id="n" value="10">
+    </label>
+  `;
+
+}
+
+form.innerHTML = base + extra;
+```
+
+}
+
+document.getElementById("panel")
+.scrollIntoView({behavior:"smooth"});
+}
+
+function value(id){
+
+const element = document.getElementById(id);
+
+return element ? element.value : "";
+}
+
+async function callWorker(message){
+
+const response = await fetch(WORKER_URL, {
+
+```
+method: "POST",
+
+headers: {
+  "Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+  message: message
+})
+```
+
+});
+
+const text = await response.text();
+
+if(!response.ok){
+
+```
+throw new Error(
+  "Worker вернул ошибку " +
+  response.status +
+  ": " +
+  text
+);
+```
+
+}
+
+try{
+
+```
+const data = JSON.parse(text);
+
+/*
+  Поддерживаем несколько распространённых
+  вариантов ответа Worker.
+*/
+
+if(typeof data === "string"){
+  return data;
+}
+
+return (
+  data.response ||
+  data.message ||
+  data.answer ||
+  data.text ||
+  data.result ||
+  text
+);
+```
+
+}catch(e){
+
+```
+return text;
+```
+
+}
+}
+
+async function generate(){
+
+if(current === "chat"){
+return;
+}
+
+const button =
+document.getElementById("generateBtn");
+
+const result =
+document.getElementById("result");
+
+const status =
+document.getElementById("status");
+
+const s =
+value("s") || "JavaScript";
+
+const t =
+value("t") || "выбранная тема";
+
+const c =
+value("c") || "студенты колледжа";
+
+const l =
+value("l") || "Русский";
+
+const q =
+value("q");
+
+let prompt = "";
+
+if(current === "plan"){
+
+```
+prompt =
+```
+
+`Создай подробный план занятия для преподавателя колледжа.
+
+Дисциплина: ${s}
+Тема: ${t}
+Курс: ${c}
+Язык: ${l}
+
+Включи:
+
+* цель занятия;
+* результаты обучения;
+* этапы занятия с примерным временем;
+* объяснение новой темы;
+* практическую часть;
+* вопросы для закрепления;
+* рефлексию;
+* домашнее задание.
+
+Ответ дай структурированно и готовым для использования преподавателем.`;
+
+}else if(current === "lab"){
+
+```
+prompt =
+```
+
+`Создай полноценную практическую работу для студентов колледжа.
+
+Дисциплина: ${s}
+Тема: ${t}
+Курс: ${c}
+Язык: ${l}
+
+Включи:
+
+* цель;
+* ожидаемые результаты;
+* краткую теорию;
+* оборудование и программное обеспечение;
+* пошаговое задание;
+* контрольные вопросы;
+* критерии оценивания.
+
+Материал должен быть практичным и готовым для выдачи студентам.`;
+
+}else if(current === "test"){
+
+```
+prompt =
+```
+
+`Создай тест для студентов колледжа.
+
+Дисциплина: ${s}
+Тема: ${t}
+Курс: ${c}
+Язык: ${l}
+Количество вопросов: ${value("n") || 10}
+
+Для каждого вопроса создай 4 варианта ответа.
+После теста укажи правильные ответы.
+Вопросы должны проверять понимание темы, а не только запоминание.`;
+
+}else if(current === "criteria"){
+
+```
+prompt =
+```
+
+`Создай критерии и дескрипторы оценивания работы студента колледжа.
+
+Дисциплина: ${s}
+Тема: ${t}
+Курс: ${c}
+Язык: ${l}
+
+Сделай понятную систему оценивания на 100 баллов.
+Добавь критерии, количество баллов и конкретные дескрипторы.`;
+
+}else if(current === "explain"){
+
+```
+prompt =
+```
+
+`Объясни студенту колледжа тему простым и понятным языком.
+
+Дисциплина: ${s}
+Тема: ${t}
+Курс: ${c}
+Язык: ${l}
+
+Запрос преподавателя:
+${q || `Объясни тему «${t}» простыми словами.`}
+
+Используй:
+
+1. Простое определение.
+2. Понятный пример.
+3. Практическое применение.
+4. Небольшое задание для самопроверки.`;
+
+}else{
+
+```
+prompt =
+```
+
+`Ты — AI-Ustaz, интеллектуальный ассистент преподавателя колледжа.
+
+Помоги преподавателю.
+
+Дисциплина: ${s}
+Тема: ${t}
+Курс: ${c}
+Язык ответа: ${l}
+
+Запрос:
+${q || `Помоги преподавателю с темой «${t}».`}
+
+Отвечай понятно, структурированно и практически.`;
+
+}
+
+result.hidden = false;
+result.textContent = "⏳ AI-Ustaz готовит ответ...";
+status.textContent = "Подключение к AI-Ustaz Worker...";
+
+button.disabled = true;
+
+try{
+
+```
+const answer =
+  await callWorker(prompt);
+
+result.textContent = answer;
+
+status.textContent =
+  "✅ Ответ получен от AI-Ustaz.";
+```
+
+}catch(error){
+
+```
+console.error(error);
+
+result.textContent =
+```
+
+`Не удалось получить ответ от AI-Ustaz.
+
+Ошибка:
+${error.message}
+
+Проверьте:
+
+1. Запущен ли Worker.
+2. Разрешены ли POST-запросы.
+3. Правильно ли указан API в Worker.
+4. Настроен ли CORS для вашего сайта.`;
+
+   status.textContent =
+   "❌ Ошибка соединения с Worker.";
+
+}finally{
+
+```
+button.disabled = false;
+```
+
+}
+}
+
+function addChatMessage(type,text){
+
+const chatBox =
+document.getElementById("chatBox");
+
+const message =
+document.createElement("div");
+
+message.className =
+"chat-message " +
+(type === "user"
+? "chat-user"
+: "chat-ai");
+
+const label =
+document.createElement("div");
+
+label.className = "chat-label";
+
+label.textContent =
+type === "user"
+? "Вы"
+: "🤖 AI-Ustaz";
+
+const content =
+document.createElement("div");
+
+content.textContent = text;
+
+message.appendChild(label);
+message.appendChild(content);
+
+chatBox.appendChild(message);
+
+chatBox.scrollTop =
+chatBox.scrollHeight;
+}
+
+async function sendChat(){
+
+const input =
+document.getElementById("chatMessage");
+
+const message =
+input.value.trim();
+
+if(!message){
+return;
+}
+
+input.value = "";
+
+addChatMessage("user",message);
+
+const chatBox =
+document.getElementById("chatBox");
+
+const loading =
+document.createElement("div");
+
+loading.className =
+"chat-message chat-ai loading";
+
+loading.textContent =
+"🤖 AI-Ustaz печатает...";
+
+chatBox.appendChild(loading);
+
+chatBox.scrollTop =
+chatBox.scrollHeight;
+
+try{
+
+```
+const context =
+  chatHistory
+    .slice(-10)
+    .map(item =>
+      `${item.role}: ${item.content}`
+    )
+    .join("\n");
+
+const prompt =
+```
+
+`Ты — AI-Ustaz, помощник преподавателя колледжа.
+
+Отвечай на русском языке, если пользователь не попросил другой язык.
+Отвечай понятно, доброжелательно и по существу.
+
+История диалога:
+${context}
+
+Новый запрос пользователя:
+${message}`;
+
+```
+const answer =
+  await callWorker(prompt);
+
+loading.remove();
+
+addChatMessage("ai",answer);
+
+chatHistory.push({
+  role:"user",
+  content:message
+});
+
+chatHistory.push({
+  role:"assistant",
+  content:answer
+});
+```
+
+}catch(error){
+
+```
+loading.remove();
+
+addChatMessage(
+  "ai",
+```
+
+`Не удалось получить ответ.
+
+Ошибка:
+${error.message}
+
+Проверь настройки Worker и CORS.`
+);
+}
+}
+
+document.addEventListener("keydown",function(event){
+
+if(
+event.key === "Enter" &&
+event.ctrlKey &&
+current === "chat"
+){
+
+```
+sendChat();
+```
+
+}
+
+});
+
+async function copyResult(){
+
+const result =
+document.getElementById("result");
+
+if(result.hidden){
+return;
+}
+
+try{
+
+```
+await navigator.clipboard.writeText(
+  result.textContent
+);
+
+document.getElementById("status").textContent =
+  "📋 Ответ скопирован.";
+```
+
+}catch(e){
+
+```
+document.getElementById("status").textContent =
+  "Не удалось скопировать ответ.";
+```
+
+}
+}
+
+</script>
+
+</body>
+</html>
