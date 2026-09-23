@@ -24,6 +24,11 @@ const generateBtn = document.getElementById("generateBtn");
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
 const status = document.getElementById("status");
+const siteLanguage = document.getElementById("siteLanguage");
+
+/* =========================
+ОТКРЫТИЕ ИНСТРУМЕНТА
+========================= */
 
 document.querySelectorAll(".card").forEach(card => {
 
@@ -37,7 +42,7 @@ openTool(card.dataset.tool);
 
 });
 
-function openTool(type){
+function openTool(type) {
 
 currentTool = type;
 
@@ -48,25 +53,20 @@ title.textContent = titles[type];
 form.innerHTML = "";
 
 result.hidden = true;
-
 chatBox.hidden = true;
-
 chatInputArea.hidden = true;
 
 status.textContent = "";
 
-if(type === "chat"){
-
+if (type === "chat") {
 
 generateBtn.style.display = "none";
-
 copyBtn.style.display = "none";
 
 chatBox.hidden = false;
-
 chatInputArea.hidden = false;
 
-if(chatHistory.length === 0){
+if (chatHistory.length === 0) {
 
   addMessage(
     "ai",
@@ -76,25 +76,29 @@ if(chatHistory.length === 0){
 
 }
 
-
-}else{
-
+} else {
 
 generateBtn.style.display = "inline-block";
-
 copyBtn.style.display = "inline-block";
 
 const base = `
+
   <div class="row">
 
     <label>
       Дисциплина
-      <input id="subject" placeholder="Например: JavaScript">
+      <input
+        id="subject"
+        placeholder="Например: JavaScript"
+      >
     </label>
 
     <label>
       Тема
-      <input id="topic" placeholder="Например: DOM">
+      <input
+        id="topic"
+        placeholder="Например: DOM"
+      >
     </label>
 
   </div>
@@ -103,26 +107,32 @@ const base = `
 
     <label>
       Курс
-      <input id="course" placeholder="3 курс">
+      <input
+        id="course"
+        placeholder="3 курс"
+      >
     </label>
 
     <label>
       Язык
       <select id="language">
-        <option>Русский</option>
-        <option>Қазақша</option>
+        <option value="Русский">Русский</option>
+        <option value="Қазақша">Қазақша</option>
       </select>
     </label>
 
   </div>
+
 `;
 
 let extra = "";
 
-if(type === "explain"){
+if (type === "explain") {
 
   extra = `
+
     <label style="display:block;margin-top:12px">
+
       Что нужно объяснить
 
       <textarea
@@ -131,18 +141,29 @@ if(type === "explain"){
       ></textarea>
 
     </label>
+
   `;
 
 }
 
-if(type === "test"){
+if (type === "test") {
 
   extra = `
+
     <label style="display:block;margin-top:12px">
+
       Количество вопросов
 
-      <input id="count" value="10">
+      <input
+        id="count"
+        type="number"
+        min="1"
+        max="50"
+        value="10"
+      >
+
     </label>
+
   `;
 
 }
@@ -152,36 +173,44 @@ form.innerHTML = base + extra;
 }
 
 panel.scrollIntoView({
-behavior:"smooth"
+behavior: "smooth"
 });
 
 }
 
-function getValue(id){
+/* =========================
+ПОЛУЧЕНИЕ ЗНАЧЕНИЯ
+========================= */
+
+function getValue(id) {
 
 const element = document.getElementById(id);
 
-return element ? element.value.trim() : "";
+return element
+? element.value.trim()
+: "";
 
 }
 
-async function callWorker(message){
+/* =========================
+ЗАПРОС К CLOUDFLARE WORKER
+========================= */
+
+async function callWorker(message) {
 
 const response = await fetch(
 WORKER_URL,
 {
-method:"POST",
+method: "POST",
 
-
-  headers:{
-    "Content-Type":"application/json"
+  headers: {
+    "Content-Type": "application/json"
   },
 
-  body:JSON.stringify({
-    message:message
+  body: JSON.stringify({
+    message: message
   })
 }
-
 
 );
 
@@ -189,24 +218,22 @@ const text = await response.text();
 
 let data;
 
-try{
+try {
+
 
 data = JSON.parse(text);
 
-
-}catch(error){
+} catch (error) {
 
 
 throw new Error(
-  "Worker вернул неправильный ответ: " +
+  "Worker вернул неправильный ответ:\n" +
   text
 );
 
-
 }
 
-if(!response.ok){
-
+if (!response.ok) {
 
 throw new Error(
   data.error ||
@@ -226,7 +253,11 @@ data.text ||
 
 }
 
-function buildPrompt(){
+/* =========================
+СОЗДАНИЕ PROMPT
+========================= */
+
+function buildPrompt() {
 
 const subject =
 getValue("subject") || "не указана";
@@ -240,90 +271,126 @@ getValue("course") || "студенты колледжа";
 const language =
 getValue("language") || "Русский";
 
-if(currentTool === "plan"){
+if (currentTool === "plan") {
 
 return `
 
+
+Ты — AI-Ustaz, помощник преподавателя колледжа.
 
 Создай подробный план занятия.
 
 Дисциплина: ${subject}
 Тема: ${topic}
 Курс: ${course}
-Язык: ${language}
+Язык ответа: ${language}
 
-Включи цель, результаты обучения,
-этапы занятия с временем,
-объяснение темы, практическую работу,
-рефлексию и домашнее задание.
+Включи:
+
+1. Цель занятия
+2. Результаты обучения
+3. Этапы занятия с временем
+4. Объяснение темы
+5. Практическую работу
+6. Проверку знаний
+7. Рефлексию
+8. Домашнее задание
+
+Ответ должен быть структурированным и удобным для преподавателя.
+
 `;
 
 }
 
-if(currentTool === "lab"){
-
+if (currentTool === "lab") {
 
 return `
 
+Ты — AI-Ustaz, помощник преподавателя колледжа.
 
-Создай практическую работу для студентов колледжа.
+Создай практическую работу для студентов.
 
 Дисциплина: ${subject}
 Тема: ${topic}
 Курс: ${course}
-Язык: ${language}
+Язык ответа: ${language}
 
-Включи цель, краткую теорию,
-оборудование, пошаговое задание,
-контрольные вопросы и критерии оценивания.
+Включи:
+
+1. Цель работы
+2. Ожидаемые результаты
+3. Краткую теорию
+4. Оборудование или программное обеспечение
+5. Пошаговое задание
+6. Контрольные вопросы
+7. Критерии оценивания
+8. Дескрипторы
+
+Сделай задание понятным студентам колледжа.
+
 `;
 
 }
 
-if(currentTool === "test"){
-
+if (currentTool === "test") {
 
 const count =
   getValue("count") || "10";
 
 return `
 
+Ты — AI-Ustaz, помощник преподавателя колледжа.
 
-Создай тест для студентов колледжа.
+Создай тест для студентов.
 
 Дисциплина: ${subject}
 Тема: ${topic}
 Курс: ${course}
-Язык: ${language}
+Язык ответа: ${language}
 
 Количество вопросов: ${count}
 
-Для каждого вопроса сделай 4 варианта ответа.
-После теста укажи правильные ответы.
+Для каждого вопроса:
+
+* сформулируй вопрос;
+* дай 4 варианта ответа;
+* только один вариант должен быть правильным.
+
+В конце укажи ключ правильных ответов.
+
 `;
 
 }
 
-if(currentTool === "criteria"){
-
+if (currentTool === "criteria") {
 
 return `
 
+Ты — AI-Ustaz, помощник преподавателя колледжа.
 
 Создай критерии оценивания работы студента.
 
 Дисциплина: ${subject}
 Тема: ${topic}
 Курс: ${course}
-Язык: ${language}
+Язык ответа: ${language}
 
-Сделай систему оценивания на 100 баллов.
-Добавь критерии и конкретные дескрипторы.
+Создай систему оценивания на 100 баллов.
+
+Для каждого критерия укажи:
+
+* количество баллов;
+* критерий;
+* конкретные дескрипторы;
+* что должен выполнить студент.
+
+В конце добавь шкалу интерпретации результата.
+
 `;
 
 }
 
-if(currentTool === "explain"){
+if (currentTool === "explain") {
 
 
 const question =
@@ -332,20 +399,29 @@ const question =
 
 return `
 
+Ты — AI-Ustaz, помощник преподавателя колледжа.
 
-Объясни студенту колледжа тему простым языком.
+Объясни студенту тему простым и понятным языком.
 
 Дисциплина: ${subject}
 Тема: ${topic}
 Курс: ${course}
-Язык: ${language}
+Язык ответа: ${language}
 
-Запрос:
+Запрос студента:
+
 ${question}
 
-Дай определение,
-практический пример
-и небольшое задание для самопроверки.
+Структура ответа:
+
+1. Простое определение
+2. Объяснение
+3. Практический пример
+4. Типичная ошибка
+5. Небольшое задание для самопроверки
+
+Не используй слишком сложные термины без объяснения.
+
 `;
 
 }
@@ -354,14 +430,17 @@ return "";
 
 }
 
+/* =========================
+КНОПКА СОЗДАТЬ
+========================= */
+
 generateBtn.addEventListener(
 "click",
 async () => {
 
-
 const prompt = buildPrompt();
 
-if(!prompt){
+if (!prompt) {
   return;
 }
 
@@ -371,11 +450,11 @@ result.textContent =
   "⏳ AI-Ustaz готовит ответ...";
 
 status.textContent =
-  "Подключение к Worker...";
+  "Подключение к AI...";
 
 generateBtn.disabled = true;
 
-try{
+try {
 
   const answer =
     await callWorker(prompt);
@@ -385,7 +464,7 @@ try{
   status.textContent =
     "✅ Ответ получен.";
 
-}catch(error){
+} catch (error) {
 
   result.textContent =
     "❌ Ошибка:\n\n" +
@@ -394,27 +473,32 @@ try{
   status.textContent =
     "Ошибка соединения.";
 
-}finally{
+  console.error(error);
+
+} finally {
 
   generateBtn.disabled = false;
 
 }
 
-
 }
 );
+
+/* =========================
+AI-ЧАТ
+========================= */
 
 sendBtn.addEventListener(
 "click",
 sendChat
 );
 
-async function sendChat(){
+async function sendChat() {
 
 const message =
 chatMessage.value.trim();
 
-if(!message){
+if (!message) {
 return;
 }
 
@@ -433,9 +517,7 @@ addMessage(
 
 sendBtn.disabled = true;
 
-try{
-
-
+try {
 const history =
   chatHistory
     .slice(-10)
@@ -446,21 +528,28 @@ const history =
     )
     .join("\n");
 
+
 const prompt = `
 
 Ты — AI-Ustaz, помощник преподавателя колледжа.
 
-Отвечай понятно и практично.
-Если пользователь пишет по-русски — отвечай по-русски.
-Если по-казахски — отвечай по-казахски.
+Отвечай понятно, грамотно и практически.
 
-История:
+Если пользователь пишет по-русски —
+отвечай по-русски.
+
+Если пользователь пишет по-казахски —
+отвечай по-казахски.
+
+История предыдущего диалога:
+
 ${history}
 
-Новый запрос:
-${message}
-`;
+Новый запрос пользователя:
 
+${message}
+
+`;
 
 const answer =
   await callWorker(prompt);
@@ -473,18 +562,16 @@ addMessage(
 );
 
 chatHistory.push({
-  role:"user",
-  content:message
+  role: "user",
+  content: message
 });
 
 chatHistory.push({
-  role:"assistant",
-  content:answer
+  role: "assistant",
+  content: answer
 });
 
-
-}catch(error){
-
+} catch (error) {
 
 loading.remove();
 
@@ -494,27 +581,32 @@ addMessage(
   error.message
 );
 
+console.error(error);
 
-}finally{
-
+} finally {
 
 sendBtn.disabled = false;
 
-
 }
 
 }
 
-function addMessage(type,text){
+/* =========================
+ДОБАВЛЕНИЕ СООБЩЕНИЯ
+========================= */
+
+function addMessage(type, text) {
 
 const message =
 document.createElement("div");
 
 message.className =
 "chat-message " +
-(type === "user"
+(
+type === "user"
 ? "chat-user"
-: "chat-ai");
+: "chat-ai"
+);
 
 message.textContent = text;
 
@@ -527,16 +619,19 @@ return message;
 
 }
 
+/* =========================
+КОПИРОВАНИЕ
+========================= */
+
 copyBtn.addEventListener(
 "click",
 async () => {
 
-
-if(result.hidden){
+if (result.hidden) {
   return;
 }
 
-try{
+try {
 
   await navigator.clipboard.writeText(
     result.textContent
@@ -545,32 +640,72 @@ try{
   status.textContent =
     "📋 Скопировано.";
 
-}catch(error){
+} catch (error) {
 
   status.textContent =
-    "Не удалось скопировать.";
+    "❌ Не удалось скопировать.";
 
 }
-
 
 }
 );
+
+/* =========================
+CTRL + ENTER В ЧАТЕ
+========================= */
 
 chatMessage.addEventListener(
 "keydown",
 event => {
 
-
-if(
+if (
   event.key === "Enter" &&
   event.ctrlKey
-){
+) {
+
+  event.preventDefault();
 
   sendChat();
 
 }
-  alert("SCRIPT.JS ЗАГРУЖЕН");
-
 
 }
+);
+
+/* =========================
+ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА
+========================= */
+
+siteLanguage.addEventListener(
+"change",
+() => {
+
+if (siteLanguage.value === "kk") {
+
+  document.querySelector(".hero h1").textContent =
+    "Оқытушының интеллектуалды көмекшісі";
+
+  document.querySelector(".hero p").textContent =
+    "AI көмегімен сабақ жоспарларын, практикалық жұмыстарды, тесттерді және бағалау критерийлерін жасаңыз.";
+
+} else {
+
+  document.querySelector(".hero h1").textContent =
+    "Интеллектуальный ассистент преподавателя";
+
+  document.querySelector(".hero p").textContent =
+    "Создавайте планы занятий, практические работы, тесты и критерии оценивания с помощью AI.";
+
+}
+```
+
+}
+);
+
+/* =========================
+ПРОВЕРКА ЗАГРУЗКИ
+========================= */
+
+console.log(
+"✅ AI-Ustaz script.js загружен"
 );
