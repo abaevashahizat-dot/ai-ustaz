@@ -1,3 +1,5 @@
+alert("SCRIPT.JS РАБОТАЕТ");
+
 const WORKER_URL =
 "https://ai-ustaz-chat.abaeva-shahizat.workers.dev/";
 
